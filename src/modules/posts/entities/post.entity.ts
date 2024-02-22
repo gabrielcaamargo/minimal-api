@@ -1,36 +1,29 @@
-import { Post } from 'src/modules/posts/entities/post.entity';
+import { User } from 'src/modules/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  OneToMany,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({ name: 'users' })
-export class User {
+@Entity({ name: 'posts' })
+export class Post {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  name: string;
-
-  @Column({ unique: true })
-  email: string;
-
-  @Column()
-  password: string;
-
-  @Column({ name: 'profile_picture', nullable: true })
-  profilePicture: string;
+  title: string;
 
   @Column({ nullable: true })
   description: string;
 
-  @OneToMany(() => Post, (post) => post.author)
-  posts: Post;
+  @ManyToOne(() => User, (user) => user.posts)
+  @JoinColumn({ name: 'author' })
+  author: User;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
