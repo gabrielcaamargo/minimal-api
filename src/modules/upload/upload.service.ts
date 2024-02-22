@@ -21,5 +21,7 @@ export class UploadService {
         Body: file,
       }),
     );
+
+    return { message: 'Image succesfully uploaded' };
   }
 }
