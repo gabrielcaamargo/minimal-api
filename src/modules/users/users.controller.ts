@@ -11,9 +11,14 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
+  @Get('show/:id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
+  }
+
+  @Get('posts/:id')
+  findUserPosts(@Param('id') id: string) {
+    return this.usersService.findUserPosts(id);
   }
 
   @Patch(':id')

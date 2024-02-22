@@ -1,3 +1,4 @@
+import { Photo } from 'src/modules/photos/entities/photo.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import {
   Column,
@@ -6,6 +7,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -21,12 +23,12 @@ export class Post {
   @Column({ nullable: true })
   description: string;
 
-  @Column({ nullable: true })
-  photos: string;
-
   @ManyToOne(() => User, (user) => user.posts)
   @JoinColumn({ name: 'author_id' })
   authorId: User;
+
+  @OneToMany(() => Photo, (photo) => photo.post)
+  photos: Photo[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
