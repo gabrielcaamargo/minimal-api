@@ -16,26 +16,22 @@ export class UsersService {
   }
 
   async findUserPosts(id: string) {
-    const userPosts = await this.usersRepository.find({
+    const user = await this.usersRepository.find({
       where: {
         id,
         deletedAt: null,
       },
       relations: ['posts'],
-      select: {
-        posts: {
-          id: true,
-          photos: true,
-          createdAt: true,
-          title: true,
-          description: true,
-        },
-      },
     });
 
-    if (!userPosts) {
+    if (!user) {
       throw new NotFoundException('User not found');
     }
+
+    const userPosts = user.map((item) => ({
+      id: item.id,
+      posts: item.posts,
+    }));
 
     return userPosts;
   }

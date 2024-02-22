@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -5,16 +6,32 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Post } from './entities/post.entity';
 import { IParamsRequest } from 'src/shared/interfaces/ParamsRequest';
+import { UploadService } from '../upload/upload.service';
+import { Photo } from '../photos/entities/photo.entity';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectRepository(Post)
     private readonly postsRepository: Repository<Post>,
+    @InjectRepository(Photo)
+    private readonly photoRepository: Repository<Photo>,
+    private readonly uploadService: UploadService,
   ) {}
 
-  async create(createPostDto: CreatePostDto) {
-    return this.postsRepository.save(createPostDto);
+  async create(createPostDto: CreatePostDto, fileName: string, file: Buffer) {
+    const post = this.postsRepository.create(createPostDto);
+    const { key } = await this.uploadService.upload(fileName, file);
+
+    const photo = this.photoRepository.create({
+      post,
+      s3Key: key,
+    });
+
+    post.photo = photo;
+
+    await this.photoRepository.save(photo);
+    return this.postsRepository.save(post);
   }
 
   findAll({ order }: IParamsRequest) {

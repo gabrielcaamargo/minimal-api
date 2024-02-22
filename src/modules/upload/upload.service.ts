@@ -11,17 +11,19 @@ export class UploadService {
     region: this.configService.get('AWS_REGION'),
   });
 
-  async upload(bucket: string, fileName: string, file: Buffer) {
+  async upload(fileName: string, file: Buffer, bucket?: string) {
     const bucketName = bucket ?? 'minimal-api-posts';
+
+    const s3key = `${Date.now()} - ${fileName}`;
 
     await this.s3Client.send(
       new PutObjectCommand({
         Bucket: bucketName,
-        Key: `${Date.now()} - ${fileName}`,
+        Key: s3key,
         Body: file,
       }),
     );
 
-    return { message: 'Image succesfully uploaded' };
+    return { key: s3key };
   }
 }

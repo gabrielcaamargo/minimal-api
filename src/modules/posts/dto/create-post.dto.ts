@@ -1,4 +1,5 @@
 import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Photo } from 'src/modules/photos/entities/photo.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 
 export class CreatePostDto {
@@ -12,7 +13,7 @@ export class CreatePostDto {
 
   @IsArray()
   @IsOptional()
-  photos: string;
+  photos: Photo[];
 
   @IsString()
   @IsNotEmpty({ message: 'An author is required' })

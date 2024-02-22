@@ -7,7 +7,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -27,8 +27,8 @@ export class Post {
   @JoinColumn({ name: 'author_id' })
   authorId: User;
 
-  @OneToMany(() => Photo, (photo) => photo.post)
-  photos: Photo[];
+  @OneToOne(() => Photo, (photo) => photo.post, { nullable: true })
+  photo: Photo;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

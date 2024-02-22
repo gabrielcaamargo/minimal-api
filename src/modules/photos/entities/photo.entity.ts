@@ -1,5 +1,5 @@
 import { Post } from 'src/modules/posts/entities/post.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Photo {
@@ -9,6 +9,6 @@ export class Photo {
   @Column()
   s3Key: string;
 
-  @ManyToOne(() => Post, (post) => post.photos)
+  @OneToOne(() => Post, (post) => post.photo, { nullable: true })
   post: Post;
 }
