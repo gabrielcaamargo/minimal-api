@@ -28,7 +28,7 @@ export class Post {
   authorId: User;
 
   @OneToOne(() => Photo, (photo) => photo.post, { nullable: true })
-  photo: Photo;
+  photo?: Photo;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

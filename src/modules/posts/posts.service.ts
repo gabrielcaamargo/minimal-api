@@ -8,6 +8,7 @@ import { Post } from './entities/post.entity';
 import { IParamsRequest } from 'src/shared/interfaces/ParamsRequest';
 import { UploadService } from '../upload/upload.service';
 import { Photo } from '../photos/entities/photo.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class PostsService {
@@ -15,23 +16,53 @@ export class PostsService {
     @InjectRepository(Post)
     private readonly postsRepository: Repository<Post>,
     @InjectRepository(Photo)
-    private readonly photoRepository: Repository<Photo>,
+    private readonly photosRepository: Repository<Photo>,
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
     private readonly uploadService: UploadService,
   ) {}
 
-  async create(createPostDto: CreatePostDto, fileName: string, file: Buffer) {
+  async create(
+    createPostDto: CreatePostDto,
+    fileName: string,
+    file: Buffer,
+    userId: string,
+  ) {
     const post = this.postsRepository.create(createPostDto);
-    const { key } = await this.uploadService.upload(fileName, file);
+    let s3Key: string;
+    let photo: Photo;
 
-    const photo = this.photoRepository.create({
-      post,
-      s3Key: key,
+    if (file) {
+      const { key } = await this.uploadService.upload(fileName, file);
+
+      s3Key = key;
+
+      photo = this.photosRepository.create({
+        post,
+        s3Key: s3Key,
+      });
+
+      post.photo = photo;
+    }
+
+    const user = await this.usersRepository.findOne({
+      where: {
+        id: userId,
+      },
     });
 
-    post.photo = photo;
+    post.authorId = user;
 
-    await this.photoRepository.save(photo);
-    return this.postsRepository.save(post);
+    if (file) {
+      await Promise.all([
+        this.photosRepository.save(photo),
+        this.postsRepository.save(post),
+      ]);
+    } else {
+      await this.postsRepository.save(post);
+    }
+
+    return { message: 'Post created!' };
   }
 
   findAll({ order }: IParamsRequest) {
@@ -42,34 +73,6 @@ export class PostsService {
         createdAt: orderBy,
       },
     });
-  }
-
-  async findOne(id: string) {
-    const post = await this.postsRepository.findOne({
-      where: {
-        id,
-      },
-    });
-
-    if (!post) {
-      throw new NotFoundException('Post not found');
-    }
-
-    return post;
-  }
-
-  async update(id: string, updatePostDto: UpdatePostDto) {
-    const post = await this.postsRepository.findOne({
-      where: {
-        id,
-      },
-    });
-
-    if (!post) {
-      throw new NotFoundException('Post not found');
-    }
-
-    return this.postsRepository.update(id, updatePostDto);
   }
 
   async delete(id: string) {
