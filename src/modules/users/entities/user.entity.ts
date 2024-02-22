@@ -29,7 +29,7 @@ export class User {
   @Column({ nullable: true })
   description: string;
 
-  @OneToMany(() => Post, (post) => post.author)
+  @OneToMany(() => Post, (post) => post.authorId)
   posts: Post;
 
   @CreateDateColumn({ name: 'created_at' })

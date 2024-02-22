@@ -21,6 +21,9 @@ export class Post {
   @Column({ nullable: true })
   description: string;
 
+  @Column({ nullable: true })
+  photos: string;
+
   @ManyToOne(() => User, (user) => user.posts)
   @JoinColumn({ name: 'author_id' })
   authorId: User;

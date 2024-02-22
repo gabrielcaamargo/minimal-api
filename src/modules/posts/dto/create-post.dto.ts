@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { User } from 'src/modules/users/entities/user.entity';
 
 export class CreatePostDto {
@@ -9,6 +9,10 @@ export class CreatePostDto {
   @IsString()
   @IsOptional()
   description: string;
+
+  @IsArray()
+  @IsOptional()
+  photos: string;
 
   @IsString()
   @IsNotEmpty({ message: 'An author is required' })
