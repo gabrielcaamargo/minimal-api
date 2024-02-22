@@ -54,6 +54,6 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    await this.usersRepository.softDelete(id);
+    return this.usersRepository.softDelete(id);
   }
 }
