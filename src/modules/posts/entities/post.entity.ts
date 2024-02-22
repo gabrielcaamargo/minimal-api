@@ -22,8 +22,8 @@ export class Post {
   description: string;
 
   @ManyToOne(() => User, (user) => user.posts)
-  @JoinColumn({ name: 'author' })
-  author: User;
+  @JoinColumn({ name: 'author_id' })
+  authorId: User;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
