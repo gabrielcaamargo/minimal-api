@@ -7,10 +7,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { PostLike } from './posts-like.entity';
 
 @Entity({ name: 'posts' })
 export class Post {
@@ -22,6 +24,12 @@ export class Post {
 
   @Column({ nullable: true })
   description: string;
+
+  @Column({ default: 0 })
+  likesCount: number;
+
+  @OneToMany(() => PostLike, (postLike) => postLike.postId)
+  likes: PostLike[];
 
   @ManyToOne(() => User, (user) => user.posts)
   @JoinColumn({ name: 'author_id' })
