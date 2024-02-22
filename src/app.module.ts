@@ -7,10 +7,11 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './modules/auth/auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { PostsModule } from './modules/posts/posts.module';
+import { UploadModule } from './modules/upload/upload.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.TYPEORM_HOST,
@@ -24,6 +25,7 @@ import { PostsModule } from './modules/posts/posts.module';
     UsersModule,
     AuthModule,
     PostsModule,
+    UploadModule,
   ],
   controllers: [],
   providers: [
