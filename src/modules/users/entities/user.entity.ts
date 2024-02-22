@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -8,15 +8,15 @@ export class User {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
   password: string;
 
-  @Column({ name: 'profile_picture' })
+  @Column({ name: 'profile_picture', nullable: true })
   profilePicture: string;
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 }
