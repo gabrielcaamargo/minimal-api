@@ -21,7 +21,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
-
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(
