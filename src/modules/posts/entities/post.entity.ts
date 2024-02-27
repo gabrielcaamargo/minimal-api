@@ -28,7 +28,7 @@ export class Post {
   @Column({ default: 0 })
   likesCount: number;
 
-  @OneToMany(() => PostLike, (postLike) => postLike.postId)
+  @OneToMany(() => PostLike, (postLike) => postLike.post)
   likes: PostLike[];
 
   @ManyToOne(() => User, (user) => user.posts)
@@ -36,6 +36,7 @@ export class Post {
   authorId: User;
 
   @OneToOne(() => Photo, (photo) => photo.post, { nullable: true })
+  @JoinColumn({ name: 'photo' })
   photo?: Photo;
 
   @CreateDateColumn({ name: 'created_at' })

@@ -15,11 +15,11 @@ export class PostLike {
 
   @ManyToOne(() => Post, (post) => post.likes)
   @JoinColumn({ name: 'post_id' })
-  postId: Post;
+  post: Post;
 
   @ManyToOne(() => User, (user) => user.likes)
   @JoinColumn({ name: 'user_id' })
-  userId: User;
+  user: User;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

@@ -29,8 +29,6 @@ export class AuthService {
       },
     });
 
-    console.log(user);
-
     if (!user) {
       throw new NotFoundException('Invalid credentials');
     }
@@ -43,7 +41,10 @@ export class AuthService {
 
     const accessToken = await this.generateAccessToken(user.id);
 
-    return { accessToken };
+    return {
+      ...user,
+      accessToken,
+    };
   }
 
   async signup(signupDto: SignupDto) {

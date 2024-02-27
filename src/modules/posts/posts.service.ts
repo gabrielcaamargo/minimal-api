@@ -72,6 +72,7 @@ export class PostsService {
       order: {
         createdAt: orderBy,
       },
+      relations: ['likes', 'authorId', 'photo'],
     });
   }
 

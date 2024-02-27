@@ -33,7 +33,7 @@ export class User {
   @OneToMany(() => Post, (post) => post.authorId)
   posts: Post;
 
-  @OneToMany(() => PostLike, (postLike) => postLike.userId)
+  @OneToMany(() => PostLike, (postLike) => postLike.user)
   likes: PostLike[];
 
   @CreateDateColumn({ name: 'created_at' })

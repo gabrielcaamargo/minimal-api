@@ -1,26 +1,75 @@
-import { Injectable } from '@nestjs/common';
-import { CreatePostsLikeDto } from './dto/create-posts-like.dto';
-import { UpdatePostsLikeDto } from './dto/update-posts-like.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreatePostLikeDto } from './dto/create-post-like.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/modules/users/entities/user.entity';
+import { Repository } from 'typeorm';
+import { Post } from '../../entities/post.entity';
+import { PostLike } from '../../entities/posts-like.entity';
 
 @Injectable()
 export class PostsLikesService {
-  create(createPostsLikeDto: CreatePostsLikeDto) {
-    return 'This action adds a new postsLike';
-  }
+  constructor(
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
+    @InjectRepository(Post)
+    private readonly postsRepository: Repository<Post>,
+    @InjectRepository(PostLike)
+    private readonly postLikesRepository: Repository<PostLike>,
+  ) {}
 
-  findAll() {
-    return `This action returns all postsLikes`;
-  }
+  async togglePostLike(createPostLikeDto: CreatePostLikeDto) {
+    const { post, user } = createPostLikeDto;
 
-  findOne(id: number) {
-    return `This action returns a #${id} postsLike`;
-  }
+    const foundUser = await this.usersRepository.findOne({
+      where: {
+        id: user.id,
+      },
+      relations: ['likes'],
+    });
 
-  update(id: number, updatePostsLikeDto: UpdatePostsLikeDto) {
-    return `This action updates a #${id} postsLike`;
-  }
+    const foundPost = await this.postsRepository.findOne({
+      where: {
+        id: post.id,
+      },
+      relations: ['likes'],
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} postsLike`;
+    if (!foundUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (!foundPost) {
+      throw new NotFoundException('Post not found');
+    }
+
+    const userHasAlreadyLikedPost = foundPost.likes?.find(
+      (like, index) => like.id == foundUser.likes[index].id,
+    );
+
+    if (userHasAlreadyLikedPost) {
+      if (foundPost.likesCount > 0) {
+        delete foundPost.likes;
+        const updatedPost = this.postsRepository.create(foundPost);
+        updatedPost.likesCount--;
+        await this.postsRepository.save(updatedPost);
+      }
+
+      await this.postLikesRepository.delete(userHasAlreadyLikedPost.id);
+      return { message: 'Post unliked!' };
+    } else {
+      delete foundPost.likes;
+      const updatedPost = this.postsRepository.create(foundPost);
+      updatedPost.likesCount++;
+
+      await Promise.all([
+        this.postsRepository.save(updatedPost),
+        this.postLikesRepository.save({
+          user: foundUser,
+          post: foundPost,
+        }),
+      ]);
+
+      return { message: 'Post liked!' };
+    }
   }
 }
