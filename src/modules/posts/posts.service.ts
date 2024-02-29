@@ -39,7 +39,7 @@ export class PostsService {
       },
     });
 
-    post.authorId = user;
+    post.author = user;
 
     return this.postsRepository.save(post);
   }
@@ -51,7 +51,7 @@ export class PostsService {
       order: {
         createdAt: orderBy,
       },
-      relations: ['likes', 'authorId', 'photo'],
+      relations: ['likes', 'authorId'],
     });
   }
 
@@ -60,7 +60,6 @@ export class PostsService {
       where: {
         id,
       },
-      relations: ['photo'],
     });
 
     if (!post) {

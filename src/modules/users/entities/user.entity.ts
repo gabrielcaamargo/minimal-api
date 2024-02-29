@@ -30,7 +30,7 @@ export class User {
   @Column({ nullable: true })
   description: string;
 
-  @OneToMany(() => Post, (post) => post.authorId, { cascade: true })
+  @OneToMany(() => Post, (post) => post.author, { cascade: true })
   posts: Post;
 
   @OneToMany(() => PostLike, (postLike) => postLike.user, { cascade: true })

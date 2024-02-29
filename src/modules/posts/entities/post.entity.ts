@@ -4,7 +4,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -33,8 +32,7 @@ export class Post {
   coverUrl: string;
 
   @ManyToOne(() => User, (user) => user.posts)
-  @JoinColumn({ name: 'author_id' })
-  authorId: User;
+  author: User;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
