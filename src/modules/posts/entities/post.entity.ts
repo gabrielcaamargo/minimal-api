@@ -1,4 +1,3 @@
-import { Photo } from 'src/modules/photos/entities/photo.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import {
   Column,
@@ -8,7 +7,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -28,7 +26,7 @@ export class Post {
   @Column({ default: 0 })
   likesCount: number;
 
-  @OneToMany(() => PostLike, (postLike) => postLike.post)
+  @OneToMany(() => PostLike, (postLike) => postLike.post, { cascade: true })
   likes: PostLike[];
 
   @Column({ name: 'cover_url', nullable: true })
@@ -37,10 +35,6 @@ export class Post {
   @ManyToOne(() => User, (user) => user.posts)
   @JoinColumn({ name: 'author_id' })
   authorId: User;
-
-  @OneToOne(() => Photo, (photo) => photo.post, { nullable: true })
-  @JoinColumn({ name: 'photo' })
-  photo?: Photo;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

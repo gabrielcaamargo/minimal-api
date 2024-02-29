@@ -30,10 +30,10 @@ export class User {
   @Column({ nullable: true })
   description: string;
 
-  @OneToMany(() => Post, (post) => post.authorId)
+  @OneToMany(() => Post, (post) => post.authorId, { cascade: true })
   posts: Post;
 
-  @OneToMany(() => PostLike, (postLike) => postLike.user)
+  @OneToMany(() => PostLike, (postLike) => postLike.user, { cascade: true })
   likes: PostLike[];
 
   @CreateDateColumn({ name: 'created_at' })
