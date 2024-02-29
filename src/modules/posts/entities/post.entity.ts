@@ -31,6 +31,9 @@ export class Post {
   @OneToMany(() => PostLike, (postLike) => postLike.post)
   likes: PostLike[];
 
+  @Column({ name: 'cover_url', nullable: true })
+  coverUrl: string;
+
   @ManyToOne(() => User, (user) => user.posts)
   @JoinColumn({ name: 'author_id' })
   authorId: User;

@@ -9,6 +9,7 @@ import { IParamsRequest } from 'src/shared/interfaces/ParamsRequest';
 import { UploadService } from '../upload/upload.service';
 import { Photo } from '../photos/entities/photo.entity';
 import { User } from '../users/entities/user.entity';
+import { createImageS3Url } from 'src/shared/utils/createImageS3Url';
 
 @Injectable()
 export class PostsService {
@@ -39,10 +40,11 @@ export class PostsService {
 
       photo = this.photosRepository.create({
         post,
-        s3Key: s3Key,
+        s3Key,
       });
 
       post.photo = photo;
+      post.coverUrl = createImageS3Url(process.env.AWS_POSTS_BUCKET, s3Key);
     }
 
     const user = await this.usersRepository.findOne({
@@ -76,13 +78,30 @@ export class PostsService {
     });
   }
 
+  async findOne(id: string) {
+    const post = await this.postsRepository.findOne({
+      where: {
+        id,
+      },
+      relations: ['photo'],
+    });
+
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    const retrievedPostPhoto = await this.uploadService.retrieve(
+      post.photo.s3Key,
+    );
+    const { Body } = retrievedPostPhoto;
+  }
+
   async delete(id: string) {
     const post = await this.postsRepository.findOne({
       where: {
         id,
       },
     });
-
     if (!post) {
       throw new NotFoundException('Post not found');
     }
