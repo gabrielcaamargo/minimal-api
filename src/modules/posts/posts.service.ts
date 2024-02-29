@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -69,7 +73,7 @@ export class PostsService {
     return post;
   }
 
-  async delete(id: string) {
+  async delete(id: string, userId: string) {
     const post = await this.postsRepository.findOne({
       where: {
         id,
@@ -78,6 +82,12 @@ export class PostsService {
 
     if (!post) {
       throw new NotFoundException('Post not found');
+    }
+
+    if (post.author.id !== userId) {
+      throw new BadRequestException(
+        'To delete a post, the user must own the post',
+      );
     }
 
     return this.postsRepository.delete(id);
