@@ -21,10 +21,13 @@ export class PostCommentService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createPostCommentDto: CreatePostCommentDto, userId: string) {
+  async create(
+    createPostCommentDto: CreatePostCommentDto,
+    loggedUserId: string,
+  ) {
     const user = await this.userRepository.findOne({
       where: {
-        id: userId,
+        id: loggedUserId,
       },
     });
 
@@ -46,7 +49,7 @@ export class PostCommentService {
     return this.postCommentRepository.save(postComment);
   }
 
-  async remove(id: string, userId: string) {
+  async remove(id: string, loggedUserId: string) {
     const postComment = await this.postCommentRepository.findOne({
       where: {
         id,
@@ -57,7 +60,7 @@ export class PostCommentService {
       throw new NotFoundException('Comment not found');
     }
 
-    if (postComment.author.id !== userId) {
+    if (postComment.author.id !== loggedUserId) {
       throw new BadRequestException(
         'To delete a comment you must own this comment',
       );
