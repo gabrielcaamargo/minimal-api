@@ -26,7 +26,7 @@ export class PostsService {
     createPostDto: CreatePostDto,
     fileName: string,
     file: Buffer,
-    userId: string,
+    loggedUserId: string,
   ) {
     const post = this.postsRepository.create(createPostDto);
 
@@ -38,7 +38,7 @@ export class PostsService {
 
     const user = await this.usersRepository.findOne({
       where: {
-        id: userId,
+        id: loggedUserId,
       },
     });
 
@@ -92,7 +92,7 @@ export class PostsService {
     return post;
   }
 
-  async delete(id: string, userId: string) {
+  async delete(id: string, loggedUserId: string) {
     const post = await this.postsRepository.findOne({
       where: {
         id,
@@ -103,7 +103,7 @@ export class PostsService {
       throw new NotFoundException('Post not found');
     }
 
-    if (post.author.id !== userId) {
+    if (post.author.id !== loggedUserId) {
       throw new BadRequestException(
         'To delete a comment you must own this comment',
       );
