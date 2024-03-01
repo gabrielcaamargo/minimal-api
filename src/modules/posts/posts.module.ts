@@ -5,10 +5,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { Post } from './entities/post.entity';
 import { UploadService } from '../upload/upload.service';
-import { PostLikesModule } from './submodules/post-likes/post-likes.module';
+import { PostLikeModule } from './submodules/post-like/post-like.module';
+import { PostCommentModule } from './submodules/post-comment/post-comment.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Post]), PostLikesModule],
+  imports: [
+    TypeOrmModule.forFeature([User, Post]),
+    PostLikeModule,
+    PostCommentModule,
+  ],
   controllers: [PostsController],
   providers: [PostsService, UploadService],
 })

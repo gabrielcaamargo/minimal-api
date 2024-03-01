@@ -9,7 +9,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { PostLike } from './posts-like.entity';
+import { PostLike } from './post-like.entity';
+import { PostComment } from './post-comment.entity';
 
 @Entity({ name: 'posts' })
 export class Post {
@@ -25,11 +26,16 @@ export class Post {
   @Column({ default: 0 })
   likesCount: number;
 
+  @Column({ name: 'cover_url', nullable: true })
+  coverUrl: string;
+
   @OneToMany(() => PostLike, (postLike) => postLike.post, { cascade: true })
   likes: PostLike[];
 
-  @Column({ name: 'cover_url', nullable: true })
-  coverUrl: string;
+  @OneToMany(() => PostComment, (postComment) => postComment.post, {
+    cascade: true,
+  })
+  comments: PostComment[];
 
   @ManyToOne(() => User, (user) => user.posts)
   author: User;

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   BadRequestException,
   Injectable,
@@ -44,7 +43,6 @@ export class PostsService {
     });
 
     post.author = user;
-
     return this.postsRepository.save(post);
   }
 
@@ -55,7 +53,17 @@ export class PostsService {
       order: {
         createdAt: orderBy,
       },
-      relations: ['likes', 'authorId'],
+      select: {
+        comments: {
+          id: true,
+          author: {
+            id: true,
+            name: true,
+          },
+          comment: true,
+        },
+      },
+      relations: ['likes', 'author', 'comments'],
     });
   }
 
@@ -64,6 +72,17 @@ export class PostsService {
       where: {
         id,
       },
+      select: {
+        comments: {
+          id: true,
+          author: {
+            id: true,
+            name: true,
+          },
+          comment: true,
+        },
+      },
+      relations: ['likes', 'author', 'comments'],
     });
 
     if (!post) {
@@ -86,7 +105,7 @@ export class PostsService {
 
     if (post.author.id !== userId) {
       throw new BadRequestException(
-        'To delete a post, the user must own the post',
+        'To delete a comment you must own this comment',
       );
     }
 

@@ -1,5 +1,5 @@
 import { Post } from 'src/modules/posts/entities/post.entity';
-import { PostLike } from 'src/modules/posts/entities/posts-like.entity';
+import { PostLike } from 'src/modules/posts/entities/post-like.entity';
 import {
   Column,
   CreateDateColumn,

@@ -4,17 +4,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/modules/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { Post } from '../../entities/post.entity';
-import { PostLike } from '../../entities/posts-like.entity';
+import { PostLike } from '../../entities/post-like.entity';
 
 @Injectable()
-export class PostsLikesService {
+export class PostLikeService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     @InjectRepository(Post)
     private readonly postsRepository: Repository<Post>,
     @InjectRepository(PostLike)
-    private readonly postLikesRepository: Repository<PostLike>,
+    private readonly postLikeRepository: Repository<PostLike>,
   ) {}
 
   async togglePostLike(createPostLikeDto: CreatePostLikeDto) {
@@ -54,7 +54,7 @@ export class PostsLikesService {
         await this.postsRepository.save(updatedPost);
       }
 
-      await this.postLikesRepository.delete(userHasAlreadyLikedPost.id);
+      await this.postLikeRepository.delete(userHasAlreadyLikedPost.id);
       return { message: 'Post unliked!' };
     } else {
       delete foundPost.likes;
@@ -63,7 +63,7 @@ export class PostsLikesService {
 
       await Promise.all([
         this.postsRepository.save(updatedPost),
-        this.postLikesRepository.save({
+        this.postLikeRepository.save({
           user: foundUser,
           post: foundPost,
         }),

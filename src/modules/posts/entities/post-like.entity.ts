@@ -8,7 +8,7 @@ import {
 import { Post } from './post.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 
-@Entity({ name: 'posts_like' })
+@Entity({ name: 'post_like' })
 export class PostLike {
   @PrimaryGeneratedColumn('uuid')
   id: string;
