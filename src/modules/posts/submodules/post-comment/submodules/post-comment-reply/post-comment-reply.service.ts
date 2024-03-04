@@ -49,4 +49,25 @@ export class PostCommentReplyService {
 
     return await this.postCommentReplyRepo.save(reply);
   }
+
+  async delete(id: string) {
+    const reply = await this.postCommentReplyRepo.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!reply) {
+      throw new NotFoundException('Comment not found');
+    }
+
+    const { repliedComment } = reply;
+
+    await Promise.all([
+      this.postCommentReplyRepo.delete(id),
+      this.postCommentRepo.update(repliedComment.id, {
+        repliesCount: repliedComment.repliesCount--,
+      }),
+    ]);
+  }
 }

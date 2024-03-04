@@ -20,7 +20,9 @@ export class PostCommentReply {
   @OneToOne(() => User, { cascade: true })
   author: User;
 
-  @ManyToOne(() => PostComment, (postComment) => postComment.replies)
+  @ManyToOne(() => PostComment, (postComment) => postComment.replies, {
+    cascade: true,
+  })
   @JoinColumn({ name: 'replied_comment' })
   repliedComment: PostComment;
 }
