@@ -27,7 +27,6 @@ export class PostComment {
   @OneToMany(
     () => PostCommentReply,
     (postCommentReply) => postCommentReply.repliedComment,
-    { cascade: true },
   )
   replies: PostCommentReply[];
 

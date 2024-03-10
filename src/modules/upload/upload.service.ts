@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { GetObjectCommand, PutObjectCommand, S3 } from '@aws-sdk/client-s3';
+import { PutObjectCommand, S3 } from '@aws-sdk/client-s3';
 
 @Injectable()
 export class UploadService {
@@ -9,6 +9,10 @@ export class UploadService {
 
   private readonly s3Client = new S3({
     region: this.configService.get('AWS_REGION'),
+    credentials: {
+      accessKeyId: this.configService.get('AWS_ACCESS_KEY_ID'),
+      secretAccessKey: this.configService.get('AWS_SECRET_ACCESS_KEY'),
+    },
   });
 
   async upload(fileName: string, file: Buffer, bucket?: string) {
@@ -25,18 +29,5 @@ export class UploadService {
     await this.s3Client.send(fileToUpload);
 
     return { key: s3key };
-  }
-
-  async retrieve(key: string, bucket?: string) {
-    const bucketName = bucket ?? 'minimal-api-posts';
-
-    const file = await this.s3Client.send(
-      new GetObjectCommand({
-        Bucket: bucketName,
-        Key: key,
-      }),
-    );
-
-    return file;
   }
 }
