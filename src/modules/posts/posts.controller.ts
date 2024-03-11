@@ -38,12 +38,7 @@ export class PostsController {
     )
     file?: Express.Multer.File,
   ) {
-    return this.postsService.create(
-      createPostDto,
-      file?.originalname,
-      file?.buffer,
-      userId,
-    );
+    return this.postsService.create(createPostDto, file, userId);
   }
 
   @Get()

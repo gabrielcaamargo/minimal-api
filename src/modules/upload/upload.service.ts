@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { PutObjectCommand, S3 } from '@aws-sdk/client-s3';
+import { PutObjectCommand, S3, DeleteObjectCommand } from '@aws-sdk/client-s3';
 
 @Injectable()
 export class UploadService {
@@ -15,19 +15,26 @@ export class UploadService {
     },
   });
 
-  async upload(fileName: string, file: Buffer, bucket?: string) {
-    const bucketName = bucket ?? 'minimal-api-posts';
-
-    const s3key = `${Date.now()}-${fileName}`;
+  async upload(bucketFolder: string, file: Express.Multer.File) {
+    const s3key = `${bucketFolder}/${Date.now()}-${file.originalname}`;
     const fileToUpload = new PutObjectCommand({
-      Bucket: bucketName,
+      Bucket: this.configService.get('AWS_BUCKET'),
       Key: s3key,
-      Body: file,
+      Body: file.buffer,
       ContentType: 'image/jpeg',
     });
 
     await this.s3Client.send(fileToUpload);
 
     return { key: s3key };
+  }
+
+  async remove(key: string) {
+    const fileToDelete = new DeleteObjectCommand({
+      Bucket: this.configService.get('AWS_BUCKET'),
+      Key: key,
+    });
+
+    return this.s3Client.send(fileToDelete);
   }
 }

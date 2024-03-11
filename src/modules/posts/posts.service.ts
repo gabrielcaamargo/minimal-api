@@ -24,14 +24,13 @@ export class PostsService {
 
   async create(
     createPostDto: CreatePostDto,
-    fileName: string,
-    file: Buffer,
+    file: Express.Multer.File,
     loggedUserId: string,
   ) {
     const post = this.postsRepository.create(createPostDto);
 
     if (file) {
-      const { key } = await this.uploadService.upload(fileName, file);
+      const { key } = await this.uploadService.upload('posts', file);
 
       post.coverUrl = createImageS3Url(process.env.AWS_POSTS_BUCKET, key);
     }
