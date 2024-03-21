@@ -41,7 +41,7 @@ export class AuthService {
     }
 
     const accessToken = await this.generateAccessToken(user.id);
-
+    delete user.password;
     return {
       ...user,
       accessToken,
