@@ -1,7 +1,8 @@
+/* eslint-disable prettier/prettier */
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthPayloadDto } from './dto/auth.dto';
 import { Repository } from 'typeorm';
@@ -20,7 +21,7 @@ export class AuthService {
 
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-  ) {}
+  ) { }
 
   async signin({ email, password }: AuthPayloadDto) {
     const user = await this.usersRepository.findOne({
@@ -30,13 +31,13 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new NotFoundException('Invalid credentials');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const isPasswordValid = await compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new NotFoundException('Invalid credentials');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const accessToken = await this.generateAccessToken(user.id);
