@@ -17,7 +17,7 @@ export class UsersService {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     private readonly uploadService: UploadService,
-  ) {}
+  ) { }
 
   async findAll() {
     return this.usersRepository.find();
@@ -27,7 +27,6 @@ export class UsersService {
     const user = await this.usersRepository.find({
       where: {
         id,
-        deletedAt: null,
       },
       relations: ['posts'],
     });
@@ -118,6 +117,13 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    return this.usersRepository.softDelete(id);
+    await this.usersRepository
+      .delete(id)
+      .then(() => {
+        return { message: 'User deleted' };
+      })
+      .catch((err) => {
+        throw new BadRequestException(err);
+      });
   }
 }
