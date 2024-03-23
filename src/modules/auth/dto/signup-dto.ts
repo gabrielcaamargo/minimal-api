@@ -1,7 +1,6 @@
 import {
   IsEmail,
   IsNotEmpty,
-  IsOptional,
   IsString,
   MinLength,
 } from 'class-validator';
@@ -20,12 +19,4 @@ export class SignupDto {
   @IsNotEmpty({ message: 'Email is required' })
   @IsEmail()
   email: string;
-
-  @IsString()
-  @IsOptional()
-  profilePicture: string;
-
-  @IsString()
-  @IsOptional()
-  description: string;
 }
