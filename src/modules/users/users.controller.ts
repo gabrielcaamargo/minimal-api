@@ -11,11 +11,13 @@ import {
   FileTypeValidator,
   ParseFilePipe,
   Query,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserLogged } from 'src/shared/decorators/current-user.decorator';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -34,6 +36,11 @@ export class UsersController {
   @Get('posts/:id')
   findUserPosts(@Param('id') id: string) {
     return this.usersService.findUserPosts(id);
+  }
+
+  @Put(':id')
+  finishUserRegister(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.finishUserRegister(createUserDto)
   }
 
   @Patch(':id')

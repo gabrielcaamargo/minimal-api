@@ -11,6 +11,7 @@ import { createImageS3Url } from 'src/shared/utils/createImageS3Url';
 import { UploadService } from '../upload/upload.service';
 import { extractKeyFromUrl } from 'src/shared/utils/extractKeyFromUrl';
 import { IUSerParams } from './types/IUserParams';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -21,11 +22,13 @@ export class UsersService {
   ) { }
 
   async findAll(data: IUSerParams) {
+
     return this.usersRepository.find({
-      where: [
+      where:
+      data.search ? [
         { username: ILike(`%${data.search}%`) },
         { name: ILike(`%${data.search}%`) }
-      ]
+      ] : undefined
     });
   }
 
@@ -47,6 +50,35 @@ export class UsersService {
     }));
 
     return userPosts;
+  }
+
+  async finishUserRegister(createUserDto: CreateUserDto) {
+    const user = await this.usersRepository.findOne({
+      where: {
+        id:  createUserDto.id
+      }
+    })
+
+    if(!user) {
+      throw new NotFoundException('User not found')
+    }
+
+    const userByUsername = await this.usersRepository.findOne({
+      where: {
+        username: createUserDto.username
+      }
+    })
+
+    if(userByUsername) {
+      throw new BadRequestException('This username is already in use')
+    }
+
+    await this.usersRepository.update(user.id, {
+      ...user,
+      ...createUserDto
+    })
+
+    return { message: 'Register concluded!' }
   }
 
   async findOne(id: string) {

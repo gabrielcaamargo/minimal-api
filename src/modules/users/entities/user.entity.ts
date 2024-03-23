@@ -32,6 +32,13 @@ export class User {
   @Column({ nullable: true })
   description: string;
 
+  @Column({ nullable: true })
+  age: number
+
+
+  @Column({ nullable: true })
+  location: string
+
   @OneToMany(() => Post, (post) => post.author, { cascade: true })
   posts: Post;
 
