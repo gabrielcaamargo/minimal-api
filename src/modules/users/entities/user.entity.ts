@@ -39,6 +39,9 @@ export class User {
   @Column({ nullable: true })
   location: string
 
+  @Column({ nullable: false, default :true, name: 'first_signin' })
+  firstSignin: boolean
+
   @OneToMany(() => Post, (post) => post.author, { cascade: true })
   posts: Post;
 

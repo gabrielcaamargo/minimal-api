@@ -40,6 +40,13 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    if(user.firstSignin) {
+      await this.usersRepository.update(user.id, {
+        ...user,
+        firstSignin: false
+      })
+    }
+
     const accessToken = await this.generateAccessToken(user.id);
     delete user.password;
     return {
