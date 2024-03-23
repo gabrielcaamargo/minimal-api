@@ -6,10 +6,11 @@ import {
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { createImageS3Url } from 'src/shared/utils/createImageS3Url';
 import { UploadService } from '../upload/upload.service';
 import { extractKeyFromUrl } from 'src/shared/utils/extractKeyFromUrl';
+import { IUSerParams } from './types/IUserParams';
 
 @Injectable()
 export class UsersService {
@@ -19,8 +20,13 @@ export class UsersService {
     private readonly uploadService: UploadService,
   ) { }
 
-  async findAll() {
-    return this.usersRepository.find();
+  async findAll(data: IUSerParams) {
+    return this.usersRepository.find({
+      where: [
+        { username: ILike(`%${data.search}%`) },
+        { name: ILike(`%${data.search}%`) }
+      ]
+    });
   }
 
   async findUserPosts(id: string) {
